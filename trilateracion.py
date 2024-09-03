@@ -107,6 +107,3 @@ ax.plot([x[1] for x in trajectory], [x[2] for x in trajectory], [x[3] for x in t
 ax.plot(x_fine, y_fine, z_fine, label='Estimated')
 ax.legend()
 plt.show()
-
-
-
