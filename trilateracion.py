@@ -3,7 +3,7 @@ from scipy.linalg import inv
 from scipy.interpolate import CubicSpline
 import matplotlib.pyplot as plt
 
-#parseo la ubicacion de los sensores [i, x_i(m), y_i(m), z_i(m)]
+#parsea la ubicacion de los sensores [i, x_i(m), y_i(m), z_i(m)]
 sensor_pos = []
 with open('sensor_positions.txt', 'r') as file:
     i=0
@@ -14,7 +14,7 @@ with open('sensor_positions.txt', 'r') as file:
         sensor_pos.append([float(x) for x in line.split(",")])
         i+=1
 
-#parseo las distancias medidas [t(s), d1(m), d2(m), d3(m)]
+#parsea las distancias medidas [t(s), d1(m), d2(m), d3(m)]
 distance = []
 with open('measurements.txt', 'r') as file:
     i=0
@@ -25,7 +25,7 @@ with open('measurements.txt', 'r') as file:
         distance.append([float(x) for x in line.split(",")])
         i+=1
 
-#parseo la ubicacion del objeto [t(s), x(m), y(m), z(m)] (ground truth)
+#parsea la ubicacion del objeto [t(s), x(m), y(m), z(m)] (ground truth)
 trajectory = []
 with open('trajectory.txt', 'r') as file:
     i=0
@@ -61,13 +61,13 @@ def newton_method(x0, y0, z0, sensor_pos,distances,t=0.0, tol=1e-6, max_iter=100
         f = func(x, y, z, sensor_pos,distances,t)
         J = jacobian(x, y, z, sensor_pos)
         
-        # Resolver el sistema J * delta = -f
+        # Resuelve el sistema J * delta = -f
         delta = inv(J).dot(-f)
         
-        # Actualizar la estimación
+        # Actualiza la estimación
         x, y, z = x + delta[0], y + delta[1], z + delta[2]
         
-        # Comprobar la convergencia
+        # comprueba la convergencia
         if np.linalg.norm(delta) < tol:
             return x, y, z
     
@@ -93,17 +93,49 @@ spline_x = CubicSpline(trajectory_estimated[:, 0], trajectory_estimated[:, 1])
 spline_y = CubicSpline(trajectory_estimated[:, 0], trajectory_estimated[:, 2])
 spline_z = CubicSpline(trajectory_estimated[:, 0], trajectory_estimated[:, 3])
 
-# Evaluar los splines en un rango más fino de tienpo, t0,tf,steps
+# Evalua los spline en un rango más fino de tienpo, t0,tf,steps
 t_fine = np.linspace(0.0, 10.0, 100)  # Ajusta según tus necesidades
 x_fine = spline_x(t_fine)
 y_fine = spline_y(t_fine)
 z_fine = spline_z(t_fine)
 
 
-#plotear la trayectoria estimada y la real en 3D
+# plotea la trayectoria estimada y la real en 3D
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.plot([x[1] for x in trajectory], [x[2] for x in trajectory], [x[3] for x in trajectory], label='Real')
-ax.plot(x_fine, y_fine, z_fine, label='Estimated')
+ax.plot(x_fine, y_fine, z_fine, label='Estimated',linestyle='--')
 ax.legend()
+plt.show()
+
+# Asumiendo que trajectory_estimated tiene 100 puntos, ajustamos el subconjunto de trajectory real
+trajectory_real_subset = np.array(trajectory)[:len(trajectory_estimated)]  # Tomamos solo los primeros 100 puntos
+
+# Ahora puedes calcular los errores entre la trayectoria estimada y este subconjunto
+errors = np.sqrt((trajectory_estimated[:, 1] - np.array([x[1] for x in trajectory_real_subset]))**2 +
+                 (trajectory_estimated[:, 2] - np.array([x[2] for x in trajectory_real_subset]))**2 +
+                 (trajectory_estimated[:, 3] - np.array([x[3] for x in trajectory_real_subset]))**2)
+
+# Error máximo, promedio, RMS y mediano
+error_max = np.max(errors)
+error_mean = np.mean(errors)
+error_rms = np.sqrt(np.mean(errors**2))
+error_median = np.median(errors)
+
+# Muestra los resultados de error
+print(f"Error máximo: {error_max}")
+print(f"Error promedio: {error_mean}")
+print(f"Error RMS: {error_rms}")
+print(f"Error mediano: {error_median}")
+
+# Gráfico del error por iteracion en escala logaritmica
+
+plt.figure(figsize=(10, 6))
+plt.plot(np.arange(len(errors)), errors, label='Error de estimación')
+plt.title('Error de estimación en función del tiempo')
+plt.yscale('log')
+plt.xlabel('Iteración')
+plt.ylabel('Error')
+plt.legend()
+plt.grid(True)
 plt.show()
