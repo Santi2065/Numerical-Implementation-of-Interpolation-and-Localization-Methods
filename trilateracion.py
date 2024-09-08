@@ -107,35 +107,3 @@ ax.plot([x[1] for x in trajectory], [x[2] for x in trajectory], [x[3] for x in t
 ax.plot(x_fine, y_fine, z_fine, label='Estimated',linestyle='--')
 ax.legend()
 plt.show()
-
-# Asumiendo que trajectory_estimated tiene 100 puntos, ajustamos el subconjunto de trajectory real
-trajectory_real_subset = np.array(trajectory)[:len(trajectory_estimated)]  # Tomamos solo los primeros 100 puntos
-
-# Ahora puedes calcular los errores entre la trayectoria estimada y este subconjunto
-errors = np.sqrt((trajectory_estimated[:, 1] - np.array([x[1] for x in trajectory_real_subset]))**2 +
-                 (trajectory_estimated[:, 2] - np.array([x[2] for x in trajectory_real_subset]))**2 +
-                 (trajectory_estimated[:, 3] - np.array([x[3] for x in trajectory_real_subset]))**2)
-
-# Error máximo, promedio, RMS y mediano
-error_max = np.max(errors)
-error_mean = np.mean(errors)
-error_rms = np.sqrt(np.mean(errors**2))
-error_median = np.median(errors)
-
-# Muestra los resultados de error
-print(f"Error máximo: {error_max}")
-print(f"Error promedio: {error_mean}")
-print(f"Error RMS: {error_rms}")
-print(f"Error mediano: {error_median}")
-
-# Gráfico del error por iteracion en escala logaritmica
-
-plt.figure(figsize=(10, 6))
-plt.plot(np.arange(len(errors)), errors, label='Error de estimación')
-plt.title('Error de estimación en función del tiempo')
-plt.yscale('log')
-plt.xlabel('Iteración')
-plt.ylabel('Error')
-plt.legend()
-plt.grid(True)
-plt.show()
