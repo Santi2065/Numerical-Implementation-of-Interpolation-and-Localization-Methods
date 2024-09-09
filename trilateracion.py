@@ -107,3 +107,18 @@ ax.plot([x[1] for x in trajectory], [x[2] for x in trajectory], [x[3] for x in t
 ax.plot(x_fine, y_fine, z_fine, label='Estimated',linestyle='--')
 ax.legend()
 plt.show()
+
+#calcular error absoluto en funcion del tiempo
+error = np.zeros((len(trajectory_estimated),2))
+for i in range(len(trajectory_estimated)):
+    error[i,0] = trajectory[i][0]
+    error[i,1] = np.sqrt((trajectory[i][1]-x_fine[i])**2 + (trajectory[i][2]-y_fine[i])**2 + (trajectory[i][3]-z_fine[i])**2)
+
+
+
+#plotea el error en funcion del tiempo
+plt.plot(error[:,0],error[:,1])
+plt.xlabel('Time (s)')
+plt.ylabel('Error (m)')
+plt.title('Error vs Time')
+plt.show()

@@ -22,7 +22,7 @@ y_values_cheb = fa(x_values_cheb)
 coefficients = np.polynomial.chebyshev.chebfit(x_values_cheb, y_values_cheb, N_POINTS-1)
 
 # puntos densos para la interpolación
-x_dense = np.linspace(-1, 1, 1000)
+x_dense = np.linspace(-1, 1, 500)
 y_dense = fa(x_dense)
 
 # Interpolación lineal equiespaciada
