@@ -117,6 +117,6 @@ The scripts submitted with the assignment are kept as they were:
   title        = {Interpolation Node Placement and Newton Trilateration},
   year         = {2024},
   howpublished = {Universidad de San Andr{\'e}s, Numerical Methods and Optimization},
-  url          = {https://github.com/Santi2065/Numerical-Implementation-of-Interpolation-and-Localization-Methods}
+  url          = {https://github.com/Santi2065/interpolation-and-trilateration}
 }
 ```
